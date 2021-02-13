@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const config = require('config')
 
 const db_connect = async () => {
   try {
     await mongoose.connect(
-      'mongodb+srv://taskmanagerapp:platenium_1994@cluster0.wb2v0.mongodb.net/marketable?retryWrites=true&w=majority',
+      config.get('mongoURI'),
       {
         useUnifiedTopology: true,
         useNewUrlParser: true,
