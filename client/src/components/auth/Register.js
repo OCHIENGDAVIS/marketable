@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { setAlert } from '../../actions/alert';
+import { register } from '../../actions/auth';
 
 const Register = (props) => {
   const [formData, setFormData] = useState({
@@ -21,8 +22,12 @@ const Register = (props) => {
       props.setAlert('Passwords do not match', 'danger');
       return;
     }
-    console.log(formData);
+    props.register({ name, email, password });
   };
+  //   if already authenticated, redirect the user
+  if (props.isAuthenticated) {
+    return <Redirect to="/dashboard" />;
+  }
   return (
     <React.Fragment>
       <h1 className="large text-primary">Sign Up</h1>
@@ -35,7 +40,6 @@ const Register = (props) => {
             type="text"
             placeholder="Name"
             name="name"
-            required
             value={name}
             onChange={(e) => onChange(e)}
           />
@@ -58,7 +62,6 @@ const Register = (props) => {
             type="password"
             placeholder="Password"
             name="password"
-            minLength="6"
             value={password}
             onChange={(e) => onChange(e)}
           />
@@ -68,7 +71,6 @@ const Register = (props) => {
             type="password"
             placeholder="Confirm Password"
             name="password2"
-            minLength="6"
             value={password2}
             onChange={(e) => onChange(e)}
           />
@@ -81,4 +83,9 @@ const Register = (props) => {
     </React.Fragment>
   );
 };
-export default connect(null, { setAlert })(Register);
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.authReducer.isAuthenticated,
+  };
+};
+export default connect(mapStateToProps, { setAlert, register })(Register);
